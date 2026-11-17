@@ -1,4 +1,4 @@
-import { Monitor, Moon, Sun } from "lucide-react";
+import { Monitor, Moon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "#/components/ui/button";
 
@@ -10,16 +10,18 @@ const NEXT_MODE: Record<ThemeMode, ThemeMode> = {
   light: "dark",
 };
 
+// "light" stays the stored value and the <html> class, so saved choices and
+// the theme-init script in __root.tsx keep working. It just looks like a
+// unicorn now.
 const MODE_LABEL: Record<ThemeMode, string> = {
   auto: "Auto",
   dark: "Dark",
-  light: "Light",
+  light: "Rainbow",
 };
 
 const MODE_ICON = {
   auto: Monitor,
   dark: Moon,
-  light: Sun,
 } as const;
 
 function resolveTheme(mode: ThemeMode, prefersDark: boolean): "light" | "dark" {
@@ -90,10 +92,10 @@ export default function ThemeToggle() {
 
   const label =
     mode === "auto"
-      ? "Theme mode: auto (system). Click to switch to light mode."
-      : `Theme mode: ${mode}. Click to switch mode.`;
+      ? "Theme mode: auto (system). Click to switch to rainbow mode."
+      : `Theme mode: ${MODE_LABEL[mode].toLowerCase()}. Click to switch mode.`;
 
-  const ModeIcon = MODE_ICON[mode];
+  const ModeIcon = mode === "light" ? null : MODE_ICON[mode];
 
   return (
     <Button
@@ -104,7 +106,7 @@ export default function ThemeToggle() {
       type="button"
       variant="outline"
     >
-      <ModeIcon />
+      {ModeIcon ? <ModeIcon /> : <span aria-hidden="true">🦄</span>}
       {MODE_LABEL[mode]}
     </Button>
   );

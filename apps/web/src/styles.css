@@ -62,7 +62,8 @@
 
 /* Light is the unicorn rainbow theme: a full rainbow page (see `.light body`
    below) under frosted white panels, with ink text and a deep violet accent.
-   Panels are 70% white so text contrast holds over the brightest stop. */
+   Every gradient stop is OKLCH L >= 0.8 at its max in-gamut chroma, and ink,
+   muted and label text hold >= 4.5:1 on each stop and on 70% white over it. */
 :root,
 .light {
   --background: oklch(0.93 0.04 310); /* pastel lavender, under the gradient */
@@ -76,7 +77,7 @@
   --secondary: oklch(1 0 0 / 0.7);
   --secondary-foreground: var(--brand-ink);
   --muted: oklch(1 0 0 / 0.7);
-  --muted-foreground: oklch(0.45 0.03 300);
+  --muted-foreground: oklch(0.38 0.04 300);
   --accent: oklch(1 0 0 / 0.7);
   --accent-foreground: var(--brand-ink);
   --destructive: oklch(0.5289 0.1661 28.5); /* #b8382e */
@@ -98,8 +99,9 @@
   --sidebar-border: oklch(1 0 0 / 0.55);
   --sidebar-ring: oklch(0.5 0.22 300);
 
-  /* Eyebrow labels: a darker violet than primary so small text passes AA. */
-  --brand-label: oklch(0.45 0.2 300);
+  /* Eyebrow labels: a darker violet than primary so small text passes AA on
+     the rainbow itself, not only on panels. */
+  --brand-label: oklch(0.38 0.2 300);
 }
 
 /* Dark variant: the same hues with paper and ink swapped. */
@@ -265,23 +267,34 @@ body {
 /* Unicorn rainbow theme (the `light` mode). Everything above that reads a
    token already follows it; these rules add what tokens cannot. */
 .light body {
+  position: relative;
+  isolation: isolate;
+}
+
+/* The gradient lives on a fixed layer, not on body: iOS Safari ignores
+   `background-attachment: fixed` and would stretch it over the full page. */
+.light body::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  content: "";
   background-image: linear-gradient(
     135deg,
-    oklch(0.68 0.22 20),
-    oklch(0.78 0.17 60),
-    oklch(0.9 0.17 100),
-    oklch(0.8 0.2 145),
-    oklch(0.7 0.15 230),
-    oklch(0.6 0.2 290),
-    oklch(0.68 0.22 340),
-    oklch(0.68 0.22 20)
+    oklch(0.8 0.114 20),
+    oklch(0.8 0.14 60),
+    oklch(0.8 0.166 100),
+    oklch(0.8 0.251 145),
+    oklch(0.8 0.126 230),
+    oklch(0.8 0.108 290),
+    oklch(0.8 0.155 340),
+    oklch(0.8 0.114 20)
   );
-  background-attachment: fixed;
   background-size: 400% 400%;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .light body {
+  .light body::before {
     animation: rainbow-shimmer 18s ease-in-out infinite;
   }
 }
@@ -309,12 +322,15 @@ body {
   [data-slot="sheet-content"],
   .island-shell
 ) {
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
 }
 
 /* The header's `bg-background/90` would be an opaque pastel bar. */
 .light header {
   background-color: oklch(1 0 0 / 0.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 .light .nav-link::after {

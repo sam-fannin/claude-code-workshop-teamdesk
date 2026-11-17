@@ -60,48 +60,46 @@
   --radius: 0.75rem;
 }
 
-/* Light is the reference surface: ink on warm paper, hairline dividers, and
-   terracotta for fills and labels. */
+/* Light is the unicorn rainbow theme: a full rainbow page (see `.light body`
+   below) under frosted white panels, with ink text and a deep violet accent.
+   Panels are 70% white so text contrast holds over the brightest stop. */
 :root,
 .light {
-  --background: var(--brand-paper);
+  --background: oklch(0.93 0.04 310); /* pastel lavender, under the gradient */
   --foreground: var(--brand-ink);
-  --card: oklch(1 0 0);
+  --card: oklch(1 0 0 / 0.7);
   --card-foreground: var(--brand-ink);
-  --popover: oklch(1 0 0);
+  --popover: oklch(1 0 0 / 0.85);
   --popover-foreground: var(--brand-ink);
-  --primary: var(--brand-terracotta);
-  --primary-foreground: var(
-    --brand-ink
-  ); /* white on terracotta is only 3.1:1 */
-  --secondary: oklch(0.9457 0.0096 93.57); /* #efede6 */
+  --primary: oklch(0.5 0.22 300); /* deep violet */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(1 0 0 / 0.7);
   --secondary-foreground: var(--brand-ink);
-  --muted: oklch(0.9457 0.0096 93.57);
-  --muted-foreground: oklch(
-    0.5181 0.01 84.59
-  ); /* #6b6862, image's #8a8681 fails AA */
-  --accent: oklch(0.9457 0.0096 93.57);
+  --muted: oklch(1 0 0 / 0.7);
+  --muted-foreground: oklch(0.45 0.03 300);
+  --accent: oklch(1 0 0 / 0.7);
   --accent-foreground: var(--brand-ink);
   --destructive: oklch(0.5289 0.1661 28.5); /* #b8382e */
-  --border: oklch(0.9088 0.0123 96.43); /* #e3e1d8 divider */
-  --input: oklch(0.9088 0.0123 96.43);
-  --ring: var(--brand-terracotta);
-  --chart-1: var(--brand-terracotta);
-  --chart-2: var(--brand-ink);
-  --chart-3: oklch(0.3791 0 0); /* #424242 */
-  --chart-4: oklch(0.622 0.0088 73.7); /* #8a8681 */
-  --chart-5: oklch(0.9088 0.0123 96.43);
-  --sidebar: var(--brand-paper);
+  --border: oklch(1 0 0 / 0.55);
+  /* Input borders sit on white panels, so a translucent white would vanish. */
+  --input: oklch(0.5 0.12 300 / 0.35);
+  --ring: oklch(0.5 0.22 300);
+  --chart-1: oklch(0.63 0.24 25);
+  --chart-2: oklch(0.78 0.17 70);
+  --chart-3: oklch(0.7 0.2 145);
+  --chart-4: oklch(0.6 0.2 250);
+  --chart-5: oklch(0.55 0.24 300);
+  --sidebar: oklch(1 0 0 / 0.7);
   --sidebar-foreground: var(--brand-ink);
-  --sidebar-primary: var(--brand-terracotta);
-  --sidebar-primary-foreground: var(--brand-ink);
-  --sidebar-accent: oklch(0.9457 0.0096 93.57);
+  --sidebar-primary: oklch(0.5 0.22 300);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(1 0 0 / 0.7);
   --sidebar-accent-foreground: var(--brand-ink);
-  --sidebar-border: oklch(0.9088 0.0123 96.43);
-  --sidebar-ring: var(--brand-terracotta);
+  --sidebar-border: oklch(1 0 0 / 0.55);
+  --sidebar-ring: oklch(0.5 0.22 300);
 
-  /* Terracotta text needs a darker step to pass AA on paper. */
-  --brand-label: oklch(0.5585 0.1322 38.91); /* #b35434 */
+  /* Eyebrow labels: a darker violet than primary so small text passes AA. */
+  --brand-label: oklch(0.45 0.2 300);
 }
 
 /* Dark variant: the same hues with paper and ink swapped. */
@@ -262,4 +260,63 @@ body {
   .rise-in {
     animation: none;
   }
+}
+
+/* Unicorn rainbow theme (the `light` mode). Everything above that reads a
+   token already follows it; these rules add what tokens cannot. */
+.light body {
+  background-image: linear-gradient(
+    135deg,
+    oklch(0.68 0.22 20),
+    oklch(0.78 0.17 60),
+    oklch(0.9 0.17 100),
+    oklch(0.8 0.2 145),
+    oklch(0.7 0.15 230),
+    oklch(0.6 0.2 290),
+    oklch(0.68 0.22 340),
+    oklch(0.68 0.22 20)
+  );
+  background-attachment: fixed;
+  background-size: 400% 400%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .light body {
+    animation: rainbow-shimmer 18s ease-in-out infinite;
+  }
+}
+
+@keyframes rainbow-shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Frosted glass: the panel tokens are translucent white, the blur keeps the
+   rainbow behind them soft so text stays readable. */
+.light
+:is(
+  [data-slot="card"],
+  [data-slot="popover-content"],
+  [data-slot="dialog-content"],
+  [data-slot="alert-dialog-content"],
+  [data-slot="dropdown-menu-content"],
+  [data-slot="select-content"],
+  [data-slot="sheet-content"],
+  .island-shell
+) {
+  backdrop-filter: blur(12px);
+}
+
+/* The header's `bg-background/90` would be an opaque pastel bar. */
+.light header {
+  background-color: oklch(1 0 0 / 0.6);
+}
+
+.light .nav-link::after {
+  background: var(--primary);
 }

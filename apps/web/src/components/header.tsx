@@ -12,6 +12,7 @@ export default function Header() {
           >
             <span className="h-2.5 w-2.5 rounded-full bg-primary" />
             Teamdesk
+            <span aria-hidden="true">🦄</span>
           </Link>
         </h2>
 
